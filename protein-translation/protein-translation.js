@@ -1,25 +1,16 @@
 export const translate = (codon = '') => {
-    let indexString = ''
-
-    if (codon.length <= 0) return []
-
     if (codon.length % 3 !== 0) throw new Error('Invalid codon')
 
-    return [...codon].reduce((acc, cur, i, arr) => {
-        indexString += cur
-        if (indexString.length === 3) {
-            const rna = TRANSLATE_CODON[indexString]
+    return (codon.match(/.{3}/g) || []).reduce((acc, cur, _, arr) => {
+        const rna = TRANSLATE_CODON[cur]
 
-            if (!rna) {
-                throw new Error('Invalid codon')
-            } else if (rna === 'STOP') {
-                arr.splice(1)
-                return acc
-            }
-
-            acc.push(rna)
-            indexString = ''
+        if (!rna) throw new Error('Invalid codon')
+        else if (rna === 'STOP') {
+            arr.splice(1)
+            return acc
         }
+
+        acc.push(rna)
         return acc
     }, [])
 }
